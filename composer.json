@@ -1,0 +1,12 @@
+{
+    "name": "anar/module-anar"
+    , "authors": [
+        {
+            "name": "Payam Naderi"
+            , "email": "naderi.payam@gmail.com"
+        }
+    ]
+    , "require": {
+        "mongodb/mongodb": "^1.0.0"
+    }
+}

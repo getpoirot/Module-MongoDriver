@@ -7,10 +7,13 @@ use Poirot\Application\Sapi;
 use Poirot\Application\Interfaces\Sapi\iSapiModule;
 use Poirot\Application\SapiCli;
 use Poirot\Application\SapiHttp;
+
 use Poirot\Ioc\Container;
+
 use Poirot\Loader\Autoloader\LoaderAutoloadAggregate;
 use Poirot\Loader\Autoloader\LoaderAutoloadNamespace;
 use Poirot\Loader\Interfaces\iLoaderAutoload;
+
 use Poirot\Std\Interfaces\Struct\iDataEntity;
 
 class Module implements iSapiModule

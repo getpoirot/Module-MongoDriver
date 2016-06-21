@@ -2,7 +2,21 @@
 namespace Module\MongoDriver;
 
 use \MongoDB;
+
 use Poirot\Std\aConfigurable;
+
+/**
+ * Accessible As a Service:
+ *   $mongoDriver = $services->get('/modules/mongodriver');
+ *   
+ *   ## master connection 
+ *   $mongoDriver->selectCollection('local', 'startup_log')->count();
+ *   
+ *   ## defined connection names
+ *   $mongoDriver->replica->selectCollection('local', 'startup_log')->count();
+ *   $mongoDriver->readonly->...
+ *   
+ */
 
 class MongoDriverManagementFacade
     extends aConfigurable

@@ -23,8 +23,6 @@ class MongoDriverManagementFacade
 {
     const CLIENT_DEFAULT = 'master';
     
-    static protected $CLIENT_DEFAULT = self::CLIENT_DEFAULT;
-
     protected $clients = array(
         # 'clientName' => MongoDB\Client,
     );
@@ -75,16 +73,6 @@ class MongoDriverManagementFacade
     function hasClient($clientName)
     {
         return array_key_exists($clientName, $this->clients);
-    }
-
-    /**
-     * Set Default Client Name
-     *
-     * @param string $clientName
-     */
-    static function setDefaultClient($clientName = self::CLIENT_DEFAULT)
-    {
-        self::$CLIENT_DEFAULT = $clientName;
     }
 
 

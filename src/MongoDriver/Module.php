@@ -16,6 +16,8 @@ use Poirot\Loader\Interfaces\iLoaderAutoload;
 
 use Poirot\Std\Interfaces\Struct\iDataEntity;
 
+// TODO Implement Model Sample Structure to local or something default collection db
+
 class Module implements iSapiModule
     , Sapi\Module\Feature\FeatureModuleInitSapi
     , Sapi\Module\Feature\FeatureModuleAutoload

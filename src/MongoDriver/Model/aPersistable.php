@@ -5,17 +5,14 @@ use MongoDB\BSON\Persistable;
 use MongoDB\BSON\Serializable;
 use MongoDB\BSON\Unserializable;
 
-use Poirot\Std\Struct\DataMean;
+use Poirot\Std\Struct\aDataOptions;
+use Poirot\Std\Struct\DataOptionsOpen;
 
-class aPersistable extends DataMean
+class aPersistable extends DataOptionsOpen
     implements Serializable
     , Unserializable
     , Persistable
 {
-    protected $properties = array (
-        // '_id'      => null,
-    );
-    
     
     // Implement Serializable / Unserializable
 
@@ -29,7 +26,7 @@ class aPersistable extends DataMean
      */
     function bsonSerialize()
     {
-        return $this->properties;
+        return iterator_to_array($this);
     }
 
     /**

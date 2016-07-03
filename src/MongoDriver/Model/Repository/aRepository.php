@@ -52,7 +52,7 @@ class aRepository
      *
      * @return $this
      */
-    function setGateway(MongoDB\Database $mongoClient)
+    protected function setGateway(MongoDB\Database $mongoClient)
     {
         // reset _query collection
         $this->_q = null;
@@ -68,7 +68,7 @@ class aRepository
      *
      * @return $this
      */
-    function setDbCollection($collectionName)
+    protected function setDbCollection($collectionName)
     {
         // reset _query collection
         $this->_q = null;
@@ -114,7 +114,7 @@ class aRepository
             )));
         }
 
-        $this->_q = $db;
-        return $this->_q->selectCollection($this->collection_name);
+        $this->_q = $db->selectCollection($this->collection_name);
+        return $this->_q;
     }
 }

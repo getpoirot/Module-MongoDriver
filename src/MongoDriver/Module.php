@@ -117,7 +117,7 @@ class Module implements iSapiModule
 
         if ($config) {
             /** @var MongoDriverManagementFacade $mongoDriver */
-            $mongoDriver = $services->get('/modules/mongodriver');
+            $mongoDriver = $services->get('/module/mongodriver');
             $mongoDriver->with($config);
         }
         

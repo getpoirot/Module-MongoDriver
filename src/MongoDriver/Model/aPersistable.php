@@ -7,6 +7,7 @@ use MongoDB\BSON\Unserializable;
 
 use Poirot\Std\Struct\aDataOptions;
 use Poirot\Std\Struct\DataOptionsOpen;
+use Poirot\Std\Type\StdTravers;
 
 class aPersistable extends DataOptionsOpen
     implements Serializable
@@ -26,7 +27,8 @@ class aPersistable extends DataOptionsOpen
      */
     function bsonSerialize()
     {
-        return iterator_to_array($this);
+        $stdTrav = new StdTravers($this);
+        return $stdTrav->toArray(null, true);
     }
 
     /**

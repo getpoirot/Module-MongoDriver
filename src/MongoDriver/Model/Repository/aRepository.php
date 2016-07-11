@@ -111,6 +111,7 @@ class aRepository
         if ($this->persist) {
             $db = $db->withOptions(array('typeMap' => array(
                 'root'     => $this->persist,
+                'document' => 'MongoDB\Model\BSONDocument', // !! traversable object to fully serialize to array
             )));
         }
 

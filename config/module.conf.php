@@ -12,7 +12,12 @@ return array(
                 // query on which collection
                 'name'    => 'name_collection',
                 // ensure indexes
-                'indexes' => array()
+                'indexes' => array(
+                    // Create a unique index on the "username" field
+                    array('key' => array('username' => 1), 'unique' => true),
+                    // Create a 2dsphere index on the "loc" field with a custom name
+                    array('key' => array('loc' => '2dsphere'), 'name' => 'geo'),
+                )
             )
         ),
         

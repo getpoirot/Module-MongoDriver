@@ -1,6 +1,21 @@
 <?php
 return array(
     Module\MongoDriver\Module::CONF_KEY => array(
+
+        // Configuration of Repository Service
+        // Usually Implemented with modules that implement mongo usage
+        // @see aServiceRepository bellow
+        \Module\MongoDriver\Services\aServiceRepository::CONF_KEY => array(
+            // which client to connect and query with
+            'client' => \Module\MongoDriver\MongoDriverManagementFacade::CLIENT_DEFAULT,
+            'collection' => array(
+                // query on which collection
+                'name'    => 'name_collection',
+                // ensure indexes
+                'indexes' => array()
+            )
+        ),
+        
         // Master Connection Client
         \Module\MongoDriver\MongoDriverManagementFacade::CLIENT_DEFAULT
             => array(

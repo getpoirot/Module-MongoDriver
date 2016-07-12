@@ -25,7 +25,7 @@ class Module implements iSapiModule
     , Sapi\Module\Feature\FeatureModuleNestFacade
     , Sapi\Module\Feature\FeatureOnPostLoadModulesGrabServices
 {
-    const CONF_KEY = 'module.mongo-driver';
+    const CONF_KEY = 'module.mongo_driver';
 
     /**
      * Init Module Against Application

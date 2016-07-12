@@ -17,6 +17,8 @@ $r = $categories->getTree($categories->findByID('red'));
 abstract class aServiceRepository
     extends aServiceContainer
 {
+    const CONF_KEY = 'mongo_driver';
+    
     /** @var string Service Name */
     protected $name = 'xxxxx';
 
@@ -68,20 +70,26 @@ abstract class aServiceRepository
         /** @var aSapi $config */
         $config       = $services->get('/sapi');
         $config       = $config->config();
+        
         /** @var DataEntity $config */
-        $config       = $config->get($this->getMergedConfKey(), array());
-
+        $config = $config->get($this->getMergedConfKey(), array());
+        if (! isset($config[self::CONF_KEY])) 
+            // Nothing to do; Config unavailable!!
+            return;
+        else 
+            $config = $config[self::CONF_KEY];
+        
         if (!$this->optsData()->getMongoClient()) {
-            $mongoClient = (isset($config['mongo_client']))
-                ? $config['mongo_client']
+            $mongoClient = (isset($config['client']))
+                ? $config['client']
                 : MongoDriverManagementFacade::CLIENT_DEFAULT;
 
             $this->optsData()->setMongoClient($mongoClient);
         }
 
         if (!$this->optsData()->getDbCollection()) {
-            $mongoCollection = (isset($config['db_collection']))
-                ? $config['db_collection']
+            $mongoCollection = (isset($config['collection']))
+                ? $config['collection']['name']
                 : null;
 
             if (!$mongoCollection)

@@ -9,7 +9,7 @@ use Poirot\Std\Struct\DataEntity;
 /*
 $categories = $services->fresh(
     '/module/categories/services/repository/categories'
-    , ['db_collection' => 'trades.categories'] // override options
+    , ['mongo_collection' => 'trades.categories'] // override options
 );
 $r = $categories->getTree($categories->findByID('red'));
 */
@@ -17,10 +17,12 @@ $r = $categories->getTree($categories->findByID('red'));
 abstract class aServiceRepository
     extends aServiceContainer
 {
-    const CONF_KEY = 'mongo_driver';
+    const CONF_KEY = 'mongo-driver-repos';
     
     /** @var string Service Name */
     protected $name = 'xxxxx';
+    
+    protected $default_collection = 'xxxxx';
 
     /**
      * Create Service
@@ -35,20 +37,12 @@ abstract class aServiceRepository
 
         /** @var MongoDriverManagementFacade $mongoDriver */
         $mongoDriver     = $services->get('/module/mongoDriver');
-        $db              = $mongoDriver->query($this->optsData()->getMongoClient());
+        $db              = $mongoDriver->database($this->optsData()->getMongoClient());
         $modelRepository = $this->getRepoClassName();
-        $modelRepository = new $modelRepository($db, $this->optsData()->getDbCollection());
+        $modelRepository = new $modelRepository($db, $this->getCollectionName());
 
         return $modelRepository;
     }
-
-    /**
-     * Repository Class Name
-     *   Module\Categories\Model\Repository\Categories
-     *
-     * @return string
-     */
-    abstract function getRepoClassName();
 
     /**
      * Get Key Of Merged Config To Retrieve Settings
@@ -58,6 +52,25 @@ abstract class aServiceRepository
      */
     abstract function getMergedConfKey();
 
+    /**
+     * Repository Class Name
+     *   Module\Categories\Model\Repository\Categories
+     *   
+     * @return string Instanceof Module\MongoDriver\Model\Repository\aRepository
+     */
+    abstract function getRepoClassName();
+
+    /**
+     * Get Collection Name
+     *
+     * @return string
+     */
+    function getCollectionName()
+    {
+        $collection = $this->optsData()->getMongoCollection();
+        
+        return ($collection) ? $collection : $this->default_collection;
+    }
 
     /**
      * Retrieve and merge options from application merged config
@@ -72,30 +85,23 @@ abstract class aServiceRepository
         $config       = $config->config();
         
         /** @var DataEntity $config */
-        $config = $config->get($this->getMergedConfKey(), array());
-        if (! isset($config[self::CONF_KEY])) 
+        $config = $config->get(\Module\MongoDriver\Module::CONF_KEY, array());
+        if (! isset($config[$this->getMergedConfKey()]))
             // Nothing to do; Config unavailable!!
             return;
         else 
-            $config = $config[self::CONF_KEY];
-        
+            $config = $config[$this->getMergedConfKey()];
+
+        $mongoCollection = $this->getCollectionName();
+        if (!$mongoCollection)
+            throw new \Exception('DB Collection name for categories not defined.');
+
         if (!$this->optsData()->getMongoClient()) {
-            $mongoClient = (isset($config['client']))
-                ? $config['client']
+            $mongoClient = (isset($config['collections'][$mongoCollection]['client']))
+                ? $config['collections'][$mongoCollection]['client']
                 : MongoDriverManagementFacade::CLIENT_DEFAULT;
 
             $this->optsData()->setMongoClient($mongoClient);
-        }
-
-        if (!$this->optsData()->getDbCollection()) {
-            $mongoCollection = (isset($config['collection']))
-                ? $config['collection']['name']
-                : null;
-
-            if (!$mongoCollection)
-                throw new \Exception('DB Collection name for categories not defined.');
-
-            $this->optsData()->setDbCollection($mongoCollection);
         }
     }
 }

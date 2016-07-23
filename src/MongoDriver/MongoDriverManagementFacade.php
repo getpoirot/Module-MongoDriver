@@ -37,13 +37,13 @@ class MongoDriverManagementFacade
      *
      * - query on default database defined by client options
      *
-     * @param string $clientName
      * @param string $db
+     * @param string $clientName
      *
      * @return MongoDB\Database
      * @throws \Exception
      */
-    function query($clientName = self::CLIENT_DEFAULT, $db = 'admin')
+    function database($db = 'admin', $clientName = self::CLIENT_DEFAULT)
     {
         if (!$this->hasClient($clientName))
             throw new \Exception(sprintf('Client with name (%s) not exists.', $clientName));
@@ -141,27 +141,7 @@ class MongoDriverManagementFacade
 
         return $exists;
     }
-
-
-    // Implement Syntactical:
-
-    function __get($name)
-    {
-        return $this->query($name);
-    }
-
-    function __set($name, $value)
-    {
-        return $this->addClient($value, $name);
-    }
-
-    function __call($name, $arguments)
-    {
-        $masterClient = $this->query();
-        return call_user_func_array(array($masterClient, $name), $arguments);
-    }
-
-
+    
     // Implement Configurable:
 
     /**
@@ -179,7 +159,10 @@ class MongoDriverManagementFacade
         if ($options instanceof \Traversable)
             $options = iterator_to_array($options);
 
-        $this->lazyClientOptions = array_merge($this->lazyClientOptions, $options);
+        if (isset($options['clients'])) {
+            $this->lazyClientOptions = array_merge($this->lazyClientOptions, $options['clients']);
+        }
+        
         return $this;
     }
 }

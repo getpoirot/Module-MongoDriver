@@ -11,7 +11,7 @@ return array(
                     // query on which collection
                     'name' => 'name_collection',
                     // which client to connect and query with
-                    'client' => \Module\MongoDriver\MongoDriverManagementFacade::CLIENT_DEFAULT,
+                    'client' => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
                     // ensure indexes
                     'indexes' => array(
                         // Create a unique index on the "username" field
@@ -26,7 +26,7 @@ return array(
         // Client Connections By Name:
         /** @see MongoDriverManagementFacade::getClient */
         'clients' => array(
-            \Module\MongoDriver\MongoDriverManagementFacade::CLIENT_DEFAULT
+            \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT
             => array(
                 ## mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]
                 #- anything that is a special URL character needs to be URL encoded.

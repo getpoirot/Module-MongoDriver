@@ -1,5 +1,5 @@
 <?php
-namespace Module\MongoDriver;
+namespace Module\MongoDriver\Module;
 
 use \MongoDB;
 

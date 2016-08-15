@@ -4,7 +4,7 @@ namespace Module\MongoDriver;
 use Module\MongoDriver\Module\MongoDriverManagementFacade;
 use Poirot\Application\aSapi;
 use Poirot\Application\Interfaces\iApplication;
-use Poirot\Application\Sapi;
+use Poirot\Application\Interfaces\Sapi;
 use Poirot\Application\Interfaces\Sapi\iSapiModule;
 use Poirot\Application\SapiCli;
 use Poirot\Application\SapiHttp;
@@ -20,11 +20,11 @@ use Poirot\Std\Interfaces\Struct\iDataEntity;
 // TODO Implement Model Sample Structure to local or something default collection db
 
 class Module implements iSapiModule
-    , Sapi\Module\Feature\FeatureModuleInitSapi
-    , Sapi\Module\Feature\FeatureModuleAutoload
-    , Sapi\Module\Feature\FeatureModuleMergeConfig
-    , Sapi\Module\Feature\FeatureModuleNestFacade
-    , Sapi\Module\Feature\FeatureOnPostLoadModulesGrabServices
+    , Sapi\Module\Feature\iFeatureModuleInitSapi
+    , Sapi\Module\Feature\iFeatureModuleAutoload
+    , Sapi\Module\Feature\iFeatureModuleMergeConfig
+    , Sapi\Module\Feature\iFeatureModuleNestFacade
+    , Sapi\Module\Feature\iFeatureOnPostLoadModulesGrabServices
 {
     const CONF_KEY = 'module.mongo_driver';
 

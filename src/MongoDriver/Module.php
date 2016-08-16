@@ -61,7 +61,7 @@ class Module implements iSapiModule
         #$nameSpaceLoader = \Poirot\Loader\Autoloader\LoaderAutoloadNamespace::class;
         $nameSpaceLoader = 'Poirot\Loader\Autoloader\LoaderAutoloadNamespace';
         /** @var LoaderAutoloadNamespace $nameSpaceLoader */
-        $nameSpaceLoader = $baseAutoloader->by($nameSpaceLoader);
+        $nameSpaceLoader = $baseAutoloader->loader($nameSpaceLoader);
         $nameSpaceLoader->addResource(__NAMESPACE__, __DIR__);
     }
     

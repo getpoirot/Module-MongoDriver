@@ -1,7 +1,9 @@
 <?php
 namespace Module\MongoDriver\Services;
 
-use Module\MongoDriver\MongoDriverManagementFacade;
+use Module\MongoDriver\Model\Repository\aRepository;
+use Module\MongoDriver\Module\MongoDriverManagementFacade;
+
 use Poirot\Application\aSapi;
 use Poirot\Ioc\Container\Service\aServiceContainer;
 use Poirot\Std\Struct\DataEntity;
@@ -17,13 +19,15 @@ $r = $categories->getTree($categories->findByID('red'));
 abstract class aServiceRepository
     extends aServiceContainer
 {
+    const CONF_KEY = 'repositories';
+    
     /** @var string Service Name */
     protected $name = 'xxxxx';
     
     /**
      * Create Service
      *
-     * @return mixed
+     * @return aRepository
      */
     final function newService()
     {
@@ -73,11 +77,11 @@ abstract class aServiceRepository
         
         /** @var DataEntity $config */
         $config = $config->get(\Module\MongoDriver\Module::CONF_KEY, array());
-        if (! isset($config['repositories'][$this->_getRepoKey()]))
+        if (! isset($config[self::CONF_KEY][$this->_getRepoKey()]))
             // Nothing to do; Config unavailable!!
             return;
         else 
-            $config = $config['repositories'][$this->_getRepoKey()];
+            $config = $config[self::CONF_KEY][$this->_getRepoKey()];
 
         if (!$this->optsData()->getMongoCollection()) {
             $mongoCollection = (isset($config['collection']['name']))

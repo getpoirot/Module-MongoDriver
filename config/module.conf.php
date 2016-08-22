@@ -1,7 +1,7 @@
 <?php
 return array(
     Module\MongoDriver\Module::CONF_KEY => array(
-        'repositories' => array(
+        \Module\MongoDriver\Services\aServiceRepository::CONF_KEY => array(
             // Configuration of Repository Service.
             // Usually Implemented with modules that implement mongo usage
             // with specific key name as repo name.
@@ -28,6 +28,9 @@ return array(
         'clients' => array(
             \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT
             => array(
+                /**
+                 * Its Always Override By One Module That Setup Data Base Client Default
+                 */
                 ## mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]
                 #- anything that is a special URL character needs to be URL encoded.
                 ## This is particularly something to take into account for the password,

@@ -28,7 +28,9 @@ class aPersistable extends DataOptionsOpen
     function bsonSerialize()
     {
         $stdTrav = new StdTravers($this);
-        return $stdTrav->toArray(null, true);
+        return $stdTrav->toArray(function($val) {
+            return $val === null; // null values not saved
+        }, true);
     }
 
     /**

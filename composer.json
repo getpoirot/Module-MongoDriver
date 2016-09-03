@@ -11,4 +11,9 @@
         , "poirot/skeleton": "dev-devel"
         , "mongodb/mongodb": "^1.0.0"
     }
+    , "autoload"  : {
+        "psr-0": {
+            "Module\\MongoDriver": "src/MongoDriver/"
+        }
+    }
 }

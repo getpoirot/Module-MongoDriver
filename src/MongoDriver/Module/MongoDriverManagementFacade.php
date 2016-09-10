@@ -43,19 +43,25 @@ class MongoDriverManagementFacade
      * @return MongoDB\Database
      * @throws \Exception
      */
-    function database($db = 'admin', $clientName = self::CLIENT_DEFAULT)
+    function database($db = null, $clientName = self::CLIENT_DEFAULT)
     {
         if (!$this->hasClient($clientName))
             throw new \Exception(sprintf('Client with name (%s) not exists.', $clientName));
 
 
         $client = $this->getClient($clientName);
-
-        if (isset($this->lazyClientOptions[$clientName])
+        
+        if ($db == null && isset($this->lazyClientOptions[$clientName])
             && is_array($this->lazyClientOptions[$clientName])
             && isset($this->lazyClientOptions[$clientName]['db'])
         )
             $db = $this->lazyClientOptions[$clientName]['db'];
+        
+        if ($db === null)
+            throw new \Exception(sprintf(
+                'Default Database name for Client (%s) not defined.'
+                , $clientName 
+            ));
         
         return $client->selectDatabase($db);
     }

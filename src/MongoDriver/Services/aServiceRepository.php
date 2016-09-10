@@ -37,7 +37,7 @@ abstract class aServiceRepository
 
         /** @var MongoDriverManagementFacade $mongoDriver */
         $mongoDriver     = $services->get('/module/mongoDriver');
-        $db              = $mongoDriver->database($this->optsData()->getMongoClient());
+        $db              = $mongoDriver->database(null, $this->optsData()->getMongoClient());
         $modelRepository = $this->getRepoClassName();
         $modelRepository = new $modelRepository($db, $this->optsData()->getMongoCollection());
 
@@ -77,6 +77,7 @@ abstract class aServiceRepository
         
         /** @var DataEntity $config */
         $config = $config->get(\Module\MongoDriver\Module::CONF_KEY, array());
+
         if (! isset($config[self::CONF_KEY][$this->_getRepoKey()]))
             // Nothing to do; Config unavailable!!
             return;

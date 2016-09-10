@@ -37,7 +37,7 @@ abstract class aServiceRepository
 
         /** @var MongoDriverManagementFacade $mongoDriver */
         $mongoDriver     = $services->get('/module/mongoDriver');
-        $db              = $mongoDriver->database($this->optsData()->getClientName());
+        $db              = $mongoDriver->database($this->optsData()->getMongoClient());
         $modelRepository = $this->getRepoClassName();
         $modelRepository = new $modelRepository($db, $this->optsData()->getMongoCollection());
 

@@ -1,33 +1,34 @@
 <?php
 return array(
-    Module\MongoDriver\Module::CONF_KEY => array(
-        \Module\MongoDriver\Services\aServiceRepository::CONF_KEY => array(
-            // Configuration of Repository Service.
-            // Usually Implemented with modules that implement mongo usage
-            // with specific key name as repo name.
+    Module\MongoDriver\Module::CONF_KEY => [
+        ## Your extended repository settings can be add as an item into this:
+        \Module\MongoDriver\Services\aServiceRepository::CONF_KEY => [
+            ## Configuration of Repository Service To Register And Retrieve From IOC,
+            #- Usually Implemented with modules that implement mongo usage
+            #- with specific key name as repo name.
             // @see aServiceRepository bellow
-            \Module\MongoDriver\Services\aServiceRepository::class => array(
-                'collection' => array(
+            \Module\MongoDriver\Services\aServiceRepository::class => [
+                'collection' => [
                     // query on which collection
-                    'name' => 'name_collection',
+                    'name'    => 'name_collection',
                     // which client to connect and query with
-                    'client' => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
+                    'client'  => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
                     // ensure indexes
-                    'indexes' => array(
+                    'indexes' => [
                         // Create a unique index on the "username" field
-                        array('key' => array('username' => 1), 'unique' => true),
+                        ['key'   => ['username' => 1], 'unique' => true],
                         // Create a 2dsphere index on the "loc" field with a custom name
-                        array('key' => array('loc' => '2dsphere'), 'name' => 'geo'),
-                    )
-                ),
-            ),
-        ),
+                        ['key'   => ['loc' => '2dsphere'], 'name' => 'geo'],
+                    ]
+                ],
+            ],
+        ],
 
         // Client Connections By Name:
         /** @see MongoDriverManagementFacade::getClient */
-        'clients' => array(
+        'clients' => [
             \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT
-            => array(
+            => [
                 /**
                  * Its Always Override By One Module That Setup Data Base Client Default
                  */
@@ -42,17 +43,17 @@ return array(
 
                 ## Specifying options via the options argument will overwrite any options
                 #- with the same name in the uri argument.
-                'options_uri' => array(
+                'options_uri' => [
                     /** @link https://docs.mongodb.com/manual/reference/connection-string */
 
-                ),
+                ],
 
-                'options_driver' => array(
+                'options_driver' => [
                     /** @link http://php.net/manual/en/mongodb-driver-manager.construct.php */
                     /** @link http://php.net/manual/en/mongodb.persistence.php#mongodb.persistence.typemaps */
                     # 'typeMap' => (array) Default type map for cursors and BSON documents.
-                ),
-            ),
-        ),
-    ),
+                ],
+            ],
+        ],
+    ],
 );

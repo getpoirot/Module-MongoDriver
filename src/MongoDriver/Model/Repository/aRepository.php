@@ -24,8 +24,8 @@ class aRepository
      */
     function __construct(MongoDB\Database $mongoDb, $collection, MongoDB\BSON\Persistable $persistable = null)
     {
-        $this->setGateway($mongoDb);
-        $this->setDbCollection($collection);
+        $this->_giveGateway($mongoDb);
+        $this->_giveDbCollection($collection);
         
         if ($persistable) 
             $this->setModelPersist($persistable);
@@ -52,7 +52,7 @@ class aRepository
      *
      * @return $this
      */
-    protected function setGateway(MongoDB\Database $mongoClient)
+    protected function _giveGateway(MongoDB\Database $mongoClient)
     {
         // reset _query collection
         $this->_q = null;
@@ -68,7 +68,7 @@ class aRepository
      *
      * @return $this
      */
-    protected function setDbCollection($collectionName)
+    protected function _giveDbCollection($collectionName)
     {
         // reset _query collection
         $this->_q = null;

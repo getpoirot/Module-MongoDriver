@@ -37,9 +37,13 @@ abstract class aServiceRepository
 
         /** @var MongoDriverManagementFacade $mongoDriver */
         $mongoDriver     = $services->get('/module/mongoDriver');
-        $db              = $mongoDriver->database(null, $this->optsData()->getMongoClient());
+
+        $mongoClient     = $this->optsData()->getMongoClient();
+        $mongoCollection = $this->optsData()->getMongoCollection();
+
+        $db              = $mongoDriver->database(null, $mongoClient);
         $modelRepository = $this->getRepoClassName();
-        $modelRepository = new $modelRepository($db, $this->optsData()->getMongoCollection());
+        $modelRepository = new $modelRepository($db, $mongoCollection);
 
         return $modelRepository;
     }
@@ -80,9 +84,13 @@ abstract class aServiceRepository
 
         if (! isset($config[self::CONF_KEY][$this->_getRepoKey()]))
             // Nothing to do; Config unavailable!!
-            return;
-        else 
-            $config = $config[self::CONF_KEY][$this->_getRepoKey()];
+            throw new \RuntimeException(sprintf(
+                'Config Repo [%s][%s][%s] is Unavailable.'
+                , \Module\MongoDriver\Module::CONF_KEY, self::CONF_KEY, $this->_getRepoKey()
+            ));
+
+
+        $config = $config[self::CONF_KEY][$this->_getRepoKey()];
 
         if (!$this->optsData()->getMongoCollection()) {
             $mongoCollection = (isset($config['collection']['name']))

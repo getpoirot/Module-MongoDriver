@@ -80,7 +80,7 @@ class Module implements iSapiModule
      */
     function initConfig(iDataEntity $config)
     {
-        return include __DIR__.'/../../config/module.conf.php';
+        return \Poirot\Config\load(__DIR__ . '/../../config/mod-driver_mongo');
     }
 
     /**

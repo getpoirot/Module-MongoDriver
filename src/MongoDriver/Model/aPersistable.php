@@ -2,17 +2,11 @@
 namespace Module\MongoDriver\Model;
 
 use MongoDB\BSON\Persistable;
-use MongoDB\BSON\Serializable;
-use MongoDB\BSON\Unserializable;
-
-use Poirot\Std\Struct\aDataOptions;
 use Poirot\Std\Struct\DataOptionsOpen;
 use Poirot\Std\Type\StdTravers;
 
 class aPersistable extends DataOptionsOpen
-    implements Serializable
-    , Unserializable
-    , Persistable
+    implements Persistable
 {
     
     // Implement Serializable / Unserializable

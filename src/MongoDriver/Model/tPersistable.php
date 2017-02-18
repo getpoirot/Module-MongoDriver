@@ -1,14 +1,10 @@
 <?php
 namespace Module\MongoDriver\Model;
 
-use MongoDB\BSON\Persistable;
-use Poirot\Std\Struct\DataOptionsOpen;
 use Poirot\Std\Type\StdTravers;
 
-class aPersistable extends DataOptionsOpen
-    implements Persistable
+trait tPersistable
 {
-    
     // Implement Serializable / Unserializable
 
     /**

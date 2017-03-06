@@ -24,6 +24,7 @@ class MongoDriverManagementFacade
     extends aConfigurable
 {
     const CLIENT_DEFAULT = 'master';
+    const SELECT_DB_FROM_CONFIG = 'db_from_merged_config';
     
     protected $lazyClientOptions = array(
         # 'clientName' => (array) options,
@@ -45,7 +46,7 @@ class MongoDriverManagementFacade
      * @return MongoDB\Database
      * @throws \Exception
      */
-    function database($db = null, $clientName = self::CLIENT_DEFAULT)
+    function database($db = self::SELECT_DB_FROM_CONFIG, $clientName = self::CLIENT_DEFAULT)
     {
         if (!$this->hasClient($clientName))
             throw new \Exception(sprintf('Client with name (%s) not exists.', $clientName));
@@ -53,11 +54,14 @@ class MongoDriverManagementFacade
 
         $client = $this->getClient($clientName);
         
-        if ($db == null && isset($this->lazyClientOptions[$clientName])
+        if ($db == self::SELECT_DB_FROM_CONFIG && isset($this->lazyClientOptions[$clientName])
             && is_array($this->lazyClientOptions[$clientName])
             && isset($this->lazyClientOptions[$clientName]['db'])
-        )
+        ) {
+            // Retrieve Default DB Config to Connect Client To ...
             $db = $this->lazyClientOptions[$clientName]['db'];
+        }
+        
         
         if ($db === null)
             throw new \Exception(sprintf(

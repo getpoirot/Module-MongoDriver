@@ -3,6 +3,7 @@ namespace Module\MongoDriver\Model\Repository;
 
 use \MongoDB;
 
+
 class aRepository
 {
     /** @var MongoDB\Database */

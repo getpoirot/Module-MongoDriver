@@ -19,6 +19,9 @@ trait tPersistable
     {
         $stdTrav = new StdTravers($this);
         $arr = $stdTrav->toArray(function($val) {
+            if (is_array($val))
+                // empty array will not save
+                return empty($val);
             return $val === null; // null values not saved
         }, true);
 

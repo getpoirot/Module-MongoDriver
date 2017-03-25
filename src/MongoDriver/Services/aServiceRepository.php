@@ -72,6 +72,7 @@ abstract class aServiceRepository
     // ..
 
     /**
+     * // TODO config as array access
      * Get Config Values
      *
      * Argument can passed and map to config if exists [$key][$_][$__] ..

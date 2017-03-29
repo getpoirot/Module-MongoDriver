@@ -20,7 +20,7 @@ $r = $categories->getTree($categories->findByID('red'));
 abstract class aServiceRepository
     extends aServiceContainer
 {
-    const CONF_KEY = 'repositories';
+    const CONF_REPOSITORIES = 'repositories';
     
     /** @var string Service Name */
     protected $name = 'xxxxx';
@@ -80,6 +80,7 @@ abstract class aServiceRepository
      * @param null $_
      *
      * @return mixed|null
+     * @throws \Exception
      */
     protected function _getConf($key = null, $_ = null)
     {
@@ -88,19 +89,22 @@ abstract class aServiceRepository
 
         /** @var aSapi $config */
         $config   = $services->get('/sapi');
-        $config   = $config->config();
+        $orig = $config   = $config->config();
         /** @var DataEntity $config */
         $config   = $config->get(\Module\MongoDriver\Module::CONF_KEY, array());
 
-        if (!isset($config[self::CONF_KEY]) && !is_array($config[self::CONF_KEY]))
-            // Repositories Config not available
-            return null;
+        if (!isset($config[self::CONF_REPOSITORIES]) && !is_array($config[self::CONF_REPOSITORIES]))
+            throw new \Exception('Mongo Driver Module, Repositories Config Not Available.');
 
 
-        $config   = $config[self::CONF_KEY];
-        if (! isset($config[$this->_getRepoKey()]))
-            // No Config Available for this repository
-            return null;
+        $config   = $config[self::CONF_REPOSITORIES];
+        if (! isset($config[$this->_getRepoKey()])) {
+            throw new \Exception(sprintf(
+                'Mongo Driver Module, No Config Available for repository (%s).'
+                , $this->_getRepoKey()
+            ));
+        }
+
 
 
         # Retrieve requested config key(s)

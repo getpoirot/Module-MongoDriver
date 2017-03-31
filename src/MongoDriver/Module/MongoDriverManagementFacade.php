@@ -153,7 +153,8 @@ class MongoDriverManagementFacade
 
         return $exists;
     }
-    
+
+
     // Implement Configurable:
 
     /**
@@ -194,11 +195,8 @@ class MongoDriverManagementFacade
      * @throws \Exception
      * @throws \InvalidArgumentException
      */
-    function with($options, $throwException = false)
+    function with(array $options, $throwException = false)
     {
-        if ($options instanceof \Traversable)
-            $options = iterator_to_array($options);
-
         if (isset($options['clients'])) {
             $this->lazyClientOptions = array_merge($this->lazyClientOptions, $options['clients']);
         }

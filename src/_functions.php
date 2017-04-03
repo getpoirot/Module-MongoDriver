@@ -29,7 +29,7 @@ namespace Module\MongoDriver
      *
      * @return array
      */
-    function expressionToMongoCondition($expression)
+    function buildMongoConditionFromExpression($expression)
     {
         if (is_string($expression))
             $expression = parseExpressionFromString($expression);
@@ -87,9 +87,6 @@ namespace Module\MongoDriver
         $parsed = [];
         foreach ($expression as $field => $term)
         {
-            if (!in_array($field, ['meta', 'mime_type', 'owner_identifier', 'version']) )
-                continue;
-
             // $field => latest_id
             // $field => is_file:true
             // $field => is_file:true|file_size>4000000

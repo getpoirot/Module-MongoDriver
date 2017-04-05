@@ -7,8 +7,9 @@ return array(
             #- Usually Implemented with modules that implement mongo usage
             #- with specific key name as repo name.
             // @see aServiceRepository bellow
-            \Module\MongoDriver\Services\aServiceRepository::class => [
-                'collection' => [
+            \Module\MongoDriver\Services\aServiceRepository::class
+            => [
+                'collection'  => [
                     // query on which collection
                     'name'    => 'name_collection',
                     // which client to connect and query with
@@ -21,6 +22,8 @@ return array(
                         ['key'   => ['loc' => '2dsphere'], 'name' => 'geo'],
                     ]
                 ],
+                // @return instanceof \MongoDB\BSON\Persistable
+                'persistable' => new \Poirot\Ioc\instance('Path\To\Service\PersistableInstance'),
             ],
         ],
 

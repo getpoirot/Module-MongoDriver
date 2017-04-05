@@ -37,11 +37,13 @@ abstract class aServiceRepository
         $services = $this->services();
 
         # Prepare Options
-        $mongoClient     = $this->optsData()->getMongoClient();
-        $mongoCollection = $this->optsData()->getMongoCollection();
+        $mongoClient      = $this->optsData()->getMongoClient();
+        $mongoCollection  = $this->optsData()->getMongoCollection();
+        $mongoPersistable = $this->optsData()->getMongoPersistable();
 
-        $mongoClient     = ($mongoClient)     ? $mongoClient     : $this->_getConf('collection', 'client');
-        $mongoCollection = ($mongoCollection) ? $mongoCollection : $this->_getConf('collection', 'name');
+        $mongoClient      = ($mongoClient)      ? $mongoClient      : $this->_getConf('collection', 'client');
+        $mongoPersistable = ($mongoPersistable) ? $mongoPersistable : $this->_getConf('persistable');
+        $mongoCollection  = ($mongoCollection)  ? $mongoCollection  : $this->_getConf('collection', 'name');
         if (!$mongoCollection)
             throw new \Exception('Collection name not available from Config or neither Options.');
         if (!$mongoClient)
@@ -50,23 +52,23 @@ abstract class aServiceRepository
                 , $mongoCollection
             ));
 
-
         /** @var MongoDriverManagementFacade $mongoDriver */
         $mongoDriver     = $services->get('/module/mongoDriver');
         $db              = $mongoDriver->database(MongoDriverManagementFacade::SELECT_DB_FROM_CONFIG, $mongoClient);
 
-        return $this->newRepoInstance($db, $mongoCollection);
+        return $this->newRepoInstance($db, $mongoCollection, $mongoPersistable);
     }
 
     /**
      * Return new instance of Repository
      *
-     * @param \MongoDB\Database $mongoDb
-     * @param string           $collection
+     * @param \MongoDB\Database  $mongoDb
+     * @param string             $collection
+     * @param string|object|null $persistable
      *
      * @return aRepository
      */
-    abstract function newRepoInstance($mongoDb, $collection);
+    abstract function newRepoInstance($mongoDb, $collection, $persistable = null);
 
 
     // ..

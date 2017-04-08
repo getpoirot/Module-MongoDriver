@@ -1,10 +1,13 @@
 <?php
 namespace Module\MongoDriver
 {
+
+    use MongoDB\BSON\ObjectID;
+
     /**
      * Make Mongo Condition From Expression
      *
-     * @param array|string $expression Query Search Term
+     * @param array $parsedExpression Expression that Parsed
      *
      * [
      *   'meta' => [
@@ -29,27 +32,35 @@ namespace Module\MongoDriver
      *
      * @return array
      */
-    function buildMongoConditionFromExpression($expression)
+    function buildMongoConditionFromExpression($parsedExpression)
     {
-        if (is_string($expression))
-            $expression = parseExpressionFromString($expression);
+        if (!is_array($parsedExpression))
+            throw new \InvalidArgumentException(sprintf(
+                'Expression must be parsed to Array; given: (%s).'
+                , \Poirot\Std\flatten($parsedExpression)
+            ));
+
 
         $condition = [];
-        foreach ($expression as $field => $conditioner) {
+        foreach ($parsedExpression as $field => $conditioner) {
             foreach ($conditioner as $o => $vl) {
                 if ($o === '$eq') {
-                    // 'limit' => [
-                    //    '$eq' => [
-                    //       40000,
-                    //     ]
-                    //  ],
-                    if (count($vl) > 1)
-                        // equality checks for the values of the same field
-                        // '$eq' => [100, 200, 300]
-                        $condition[$field] = ['$in' => $vl];
-                    else
-                        // '$eq' => [100]
-                        $condition[$field] = current($vl);
+                    if ($vl instanceof ObjectID) {
+                        $condition[$field] = $vl;
+                    } else {
+                        // 'limit' => [
+                        //    '$eq' => [
+                        //       40000,
+                        //     ]
+                        //  ],
+                        if (count($vl) > 1)
+                            // equality checks for the values of the same field
+                            // '$eq' => [100, 200, 300]
+                            $condition[$field] = ['$in' => $vl];
+                        else
+                            // '$eq' => [100]
+                            $condition[$field] = current($vl);
+                    }
                 } elseif ($o === '$gt') {
                     $condition[$field] = [
                         '$gt' => $vl,
@@ -60,7 +71,7 @@ namespace Module\MongoDriver
                     ];
                 } else {
                     // Condition also can be other embed field condition
-                    $cond = $this->__importCondition([$o => $vl]);
+                    $cond = buildMongoConditionFromExpression([$o => $vl]);
                     $condition[$field.'.'.$o] = current($cond);
                 }
             }
@@ -75,18 +86,58 @@ namespace Module\MongoDriver
      * ?meta=is_file:true|file_size>40000&mime_type=audio/mp3&version_tag=latest|low_quality
      *        &offset=latest_id&limit=20
      *
-     * @param $expression
+     * @param string $expression      ['limit']
+     * @param array  $exclusionFields The fields that is in query string but must not used in expression
+     * @param string $exclusionBehave allow|disallow
      *
      * @return array
      * @throws \Exception
      */
-    function parseExpressionFromString($expression)
+    function parseExpressionFromString($expression, array $exclusionFields = array(), $exclusionBehave = 'disallow')
     {
+        if (!is_string($expression))
+            throw new \InvalidArgumentException(sprintf(
+                'Expression Term Must Be String; given: (%s).'
+                , \Poirot\Std\flatten($expression)
+            ));
+
+
         parse_str($expression, $expression);
 
+        return parseExpressionFromArray($expression, $exclusionFields, $exclusionBehave);
+    }
+
+    /**
+     * Parse Expression From Array
+     *
+     * Array (
+     *   [$post] => stat:publish|share:private
+     * )
+     *
+     *
+     * @param string $expression      ['limit']
+     * @param array  $exclusionFields The fields that is in query string but must not used in expression
+     * @param string $exclusionBehave allow|disallow
+     *
+     * @return array
+     * @throws \Exception
+     */
+    function parseExpressionFromArray($expression, array $exclusionFields = array(), $exclusionBehave = 'disallow')
+    {
         $parsed = [];
         foreach ($expression as $field => $term)
         {
+            if (!empty($exclusionFields))
+            {
+                $flag = in_array($field, $exclusionFields);
+
+                ($exclusionBehave != 'allow') ?: $flag = !$flag;
+
+                if ($flag)
+                    // The Field not considered as Expression Term
+                    continue;
+            }
+
             // $field => latest_id
             // $field => is_file:true
             // $field => is_file:true|file_size>4000000
@@ -150,7 +201,11 @@ namespace Module\MongoDriver
             }
 
             elseif (!is_array($term))
-                throw new \Exception(sprintf('Invalid Term (%s)', \Poirot\Std\flatten($term)));
+                // Term Is Object exp. ...... _id => ObjectID("")
+                // that expression object may have specific meaning for condition builder
+                $term = [
+                    '$eq' => $term,
+                ];
 
             $parsed[$field] = $term;
 
@@ -158,5 +213,4 @@ namespace Module\MongoDriver
 
         return $parsed;
     }
-
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Module\MongoDriver\Module;
+namespace Module\MongoDriver\Actions;
 
 use \MongoDB;
 
@@ -7,7 +7,7 @@ use Poirot\Std\aConfigurable;
 
 /**
  * Accessible As a Service:
- *   $mongoDriver = $services->get('/modules/mongodriver');
+ *   $mongoDriver = \Module\MongoDriver\Actions\IOC::Driver();
  *   
  *   ## master connection 
  *   $mongoDriver->selectCollection('local', 'startup_log')->count();
@@ -16,11 +16,9 @@ use Poirot\Std\aConfigurable;
  *   $mongoDriver->replica->selectCollection('local', 'startup_log')->count();
  *   $mongoDriver->serverN->...
  *
- * This class configure with merged config after all modules load:
- * @see \Module\MongoDriver::resolveRegisteredServices()
  */
 
-class MongoDriverManagementFacade
+class MongoDriverAction
     extends aConfigurable
 {
     const CLIENT_DEFAULT = 'master';
@@ -34,6 +32,14 @@ class MongoDriverManagementFacade
         # 'clientName' => \MongoDb\Client,
     );
 
+
+    /**
+     * @return $this
+     */
+    function __invoke()
+    {
+        return $this;
+    }
 
     /**
      * Attain Connection Client

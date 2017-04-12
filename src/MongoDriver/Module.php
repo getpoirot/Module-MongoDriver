@@ -1,17 +1,13 @@
 <?php
 namespace Module\MongoDriver;
 
-use Module\MongoDriver\Module\MongoDriverManagementFacade;
-
 use Poirot\Application\aSapi;
 use Poirot\Application\Interfaces\iApplication;
 use Poirot\Application\Interfaces\Sapi;
 use Poirot\Application\Interfaces\Sapi\iSapiModule;
-use Poirot\Application\SapiCli;
-use Poirot\Application\SapiHttp;
+use Poirot\Application\Sapi\Module\ContainerForFeatureActions;
 
-use Poirot\Ioc\Container;
-
+use Poirot\Ioc\Container\BuildContainer;
 use Poirot\Loader\Autoloader\LoaderAutoloadAggregate;
 use Poirot\Loader\Autoloader\LoaderAutoloadNamespace;
 use Poirot\Loader\Interfaces\iLoaderAutoload;
@@ -24,7 +20,7 @@ class Module implements iSapiModule
     , Sapi\Module\Feature\iFeatureModuleInitSapi
     , Sapi\Module\Feature\iFeatureModuleAutoload
     , Sapi\Module\Feature\iFeatureModuleMergeConfig
-    , Sapi\Module\Feature\iFeatureOnPostLoadModulesGrabServices
+    , Sapi\Module\Feature\iFeatureModuleNestActions
 {
     const CONF_KEY = 'module.mongo_driver';
 
@@ -83,29 +79,16 @@ class Module implements iSapiModule
     }
 
     /**
-     * Resolve to service with name
+     * Get Action Services
      *
-     * - each argument represent requested service by registered name
-     *   if service not available default argument value remains
-     * - "services" as argument will retrieve services container itself.
+     * priority not that serious
      *
-     * ! after all modules loaded
+     * - return Array used to Build ModuleActionsContainer
      *
-     * @param Container $services service names must have default value
-     * @param aSapi|SapiHttp|SapiCli $sapi
-     *
-     * @throws \Exception
+     * @return array|ContainerForFeatureActions|BuildContainer|\Traversable
      */
-    function resolveRegisteredServices($services = null, $sapi = null)
+    function getActions()
     {
-        ## Build Mongo Client Managements With Merged Configs
-        
-        $config = $sapi->config()->get(self::CONF_KEY);
-
-        if ($config) {
-            /** @var MongoDriverManagementFacade $mongoDriver */
-            $mongoDriver = $services->get('/module/mongodriver');
-            $mongoDriver->with($config);
-        }
+        return \Poirot\Config\load(__DIR__ . '/../../config/mod-driver_mongo.actions');
     }
 }

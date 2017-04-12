@@ -1,4 +1,6 @@
 <?php
+use Module\MongoDriver\Actions\MongoDriverAction;
+
 return array(
     Module\MongoDriver\Module::CONF_KEY => [
         ## Your extended repository settings can be add as an item into this:
@@ -13,7 +15,7 @@ return array(
                     // query on which collection
                     'name'    => 'name_collection',
                     // which client to connect and query with
-                    'client'  => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
+                    'client'  => MongoDriverAction::CLIENT_DEFAULT,
                     // ensure indexes
                     'indexes' => [
                         // Create a unique index on the "username" field
@@ -30,7 +32,7 @@ return array(
         // Client Connections By Name:
         /** @see MongoDriverManagementFacade::getClient */
         'clients' => [
-            \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT
+            MongoDriverAction::CLIENT_DEFAULT
             => [
                 /**
                  * Its Always Override By One Module That Setup Data Base Client Default

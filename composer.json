@@ -17,6 +17,7 @@
         },
         "files": [
             "src/MongoDriver/_functions.php"
+            , "src/MongoDriver/_ioc-facade.php"
         ]
     }
 }

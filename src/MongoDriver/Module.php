@@ -59,6 +59,10 @@ class Module implements iSapiModule
         /** @var LoaderAutoloadNamespace $nameSpaceLoader */
         $nameSpaceLoader = $baseAutoloader->loader($nameSpaceLoader);
         $nameSpaceLoader->addResource(__NAMESPACE__, __DIR__);
+
+
+        require_once __DIR__.'/_functions.php';
+        require_once __DIR__.'/_ioc-facade.php';
     }
     
     /**

@@ -16,7 +16,7 @@
             "Module\\MongoDriver\\": "src/MongoDriver/"
         },
         "files": [
-            "src/_functions.php"
+            "src/MongoDriver/_functions.php"
         ]
     }
 }

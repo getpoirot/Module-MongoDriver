@@ -24,7 +24,6 @@ class Module implements iSapiModule
     , Sapi\Module\Feature\iFeatureModuleInitSapi
     , Sapi\Module\Feature\iFeatureModuleAutoload
     , Sapi\Module\Feature\iFeatureModuleMergeConfig
-    , Sapi\Module\Feature\iFeatureModuleNestFacade
     , Sapi\Module\Feature\iFeatureOnPostLoadModulesGrabServices
 {
     const CONF_KEY = 'module.mongo_driver';
@@ -84,20 +83,6 @@ class Module implements iSapiModule
     }
 
     /**
-     * Get Module As Service Instance
-     *
-     * priority not that serious
-     *
-     * @param Container $nestedModulesContainer
-     *
-     * @return mixed
-     */
-    function getModuleAsFacade(Container $nestedModulesContainer = null)
-    {
-        return new MongoDriverManagementFacade;
-    }
-
-    /**
      * Resolve to service with name
      *
      * - each argument represent requested service by registered name
@@ -122,6 +107,5 @@ class Module implements iSapiModule
             $mongoDriver = $services->get('/module/mongodriver');
             $mongoDriver->with($config);
         }
-        
     }
 }

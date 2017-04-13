@@ -25,7 +25,7 @@ return array(
                     ]
                 ],
                 // @return instanceof \MongoDB\BSON\Persistable
-                'persistable' => new \Poirot\Ioc\instance('Path\To\Service\PersistableInstance'),
+                #'persistable' => new \Poirot\Ioc\instance('Path\To\Service\PersistableInstance'),
             ],
         ],
 

@@ -85,7 +85,7 @@ class Module implements iSapiModule
     /**
      * Get Action Services
      *
-     * priority not that serious
+     * priority: after GrabRegisteredServices
      *
      * - return Array used to Build ModuleActionsContainer
      *

@@ -2,8 +2,8 @@
 namespace Module\MongoDriver\Services;
 
 
+use Module\MongoDriver\Actions\MongoDriverAction;
 use Module\MongoDriver\Model\Repository\aRepository;
-use Module\MongoDriver\Module\MongoDriverManagementFacade;
 
 use Poirot\Application\aSapi;
 use Poirot\Ioc\Container\Service\aServiceContainer;
@@ -52,9 +52,9 @@ abstract class aServiceRepository
                 , $mongoCollection
             ));
 
-        /** @var MongoDriverManagementFacade $mongoDriver */
-        $mongoDriver     = $services->get('/module/mongoDriver');
-        $db              = $mongoDriver->database(MongoDriverManagementFacade::SELECT_DB_FROM_CONFIG, $mongoClient);
+        /** @var MongoDriverAction $mongoDriver */
+        $mongoDriver     = \Module\MongoDriver\Actions\IOC::Driver();
+        $db              = $mongoDriver->database(MongoDriverAction::SELECT_DB_FROM_CONFIG, $mongoClient);
 
         return $this->newRepoInstance($db, $mongoCollection, $mongoPersistable);
     }

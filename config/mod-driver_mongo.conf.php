@@ -30,7 +30,6 @@ return array(
         ],
 
         // Client Connections By Name:
-        /** @see MongoDriverManagementFacade::getClient */
         'clients' => [
             MongoDriverAction::CLIENT_DEFAULT
             => [

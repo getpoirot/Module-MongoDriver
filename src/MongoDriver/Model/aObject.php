@@ -5,6 +5,10 @@ use Poirot\Std\Interfaces\Pact\ipConfigurable;
 use Poirot\Std\Struct\DataOptionsOpen;
 
 
+/**
+ * @deprecated use Std aValueObject
+ *
+ */
 abstract class aObject
     extends DataOptionsOpen
     implements ipConfigurable

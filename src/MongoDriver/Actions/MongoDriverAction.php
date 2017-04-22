@@ -173,7 +173,7 @@ class MongoDriverAction
      *
      * 'clients' => [
      *    // Its Always Override By One Module That Setup Data Base Client Default
-     *    \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT => [
+     *    'master' => [
      *       ## mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]
      *       #- anything that is a special URL character needs to be URL encoded.
      *       ## This is particularly something to take into account for the password,

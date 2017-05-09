@@ -11,11 +11,19 @@ return array(
             // @see aServiceRepository bellow
             \Module\MongoDriver\Services\aServiceRepository::class
             => [
+                // default db name
+                'db_name' => 'poirot',
+
+                // !! this settings are an example how you can define your repo settings
                 'collection'  => [
-                    // query on which collection
-                    'name'    => 'name_collection',
+
                     // which client to connect and query with
                     'client'  => MongoDriverAction::CLIENT_DEFAULT,
+                    // specific database for this collection
+                    'db_name' => 'posts',
+
+                    // query on which collection
+                    'name'    => 'name_collection',
                     // ensure indexes
                     'indexes' => [
                         // Create a unique index on the "username" field
@@ -24,6 +32,8 @@ return array(
                         ['key'   => ['loc' => '2dsphere'], 'name' => 'geo'],
                     ]
                 ],
+
+                // !! this settings are an example how you can define your repo settings
                 // @return instanceof \MongoDB\BSON\Persistable
                 #'persistable' => new \Poirot\Ioc\instance('Path\To\Service\PersistableInstance'),
             ],
@@ -41,9 +51,6 @@ return array(
                 ## This is particularly something to take into account for the password,
                 #- as that is likely to have characters such as % in it.
                 'host' => 'mongodb://localhost:27017',
-
-                ## Required Database Name To Client Connect To
-                'db'   => 'admin',
 
                 ## Specifying options via the options argument will overwrite any options
                 #- with the same name in the uri argument.

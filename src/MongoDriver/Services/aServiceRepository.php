@@ -33,27 +33,36 @@ abstract class aServiceRepository
      */
     final function newService()
     {
-        $services = $this->services();
-
         # Prepare Options
         $mongoClient      = $this->optsData()->getMongoClient();
         $mongoCollection  = $this->optsData()->getMongoCollection();
         $mongoPersistable = $this->optsData()->getMongoPersistable();
+        $mongoDatabase    = $this->optsData()->getDbName();
 
-        $mongoClient      = ($mongoClient)      ? $mongoClient      : $this->_getConf('collection', 'client');
-        $mongoPersistable = ($mongoPersistable) ? $mongoPersistable : $this->_getConf('persistable');
-        $mongoCollection  = ($mongoCollection)  ? $mongoCollection  : $this->_getConf('collection', 'name');
-        if (!$mongoCollection)
+        $mongoClient      = ($mongoClient)      ? $mongoClient      : $this->_getConf(null, 'collection', 'client');
+        $mongoCollection  = ($mongoCollection)  ? $mongoCollection  : $this->_getConf(null, 'collection', 'name');
+        $mongoDatabase    = ($mongoDatabase)    ? $mongoDatabase    : $this->_getConf(null, 'collection', 'db_name');
+        $mongoPersistable = ($mongoPersistable) ? $mongoPersistable : $this->_getConf(null, 'persistable');
+
+
+        if (! $mongoDatabase )
+            // Try to get default database name
+            $mongoDatabase = $this->_getConf(self::class, 'db_name');
+
+        if (! $mongoCollection )
             throw new \Exception('Collection name not available from Config or neither Options.');
-        if (!$mongoClient)
+
+        if (! $mongoClient )
             throw new \Exception(sprintf(
                 'Client name for collection (%s) not available from Config or neither Options.'
                 , $mongoCollection
             ));
 
+
         /** @var MongoDriverAction $mongoDriver */
-        $mongoDriver     = \Module\MongoDriver\Actions\IOC::Driver();
-        $db              = $mongoDriver->database(MongoDriverAction::SELECT_DB_FROM_CONFIG, $mongoClient);
+        $mongoDriver = \Module\MongoDriver\Actions\IOC::Driver();
+        $db          = $mongoDriver->getClient($mongoClient)
+            ->selectDatabase($mongoDatabase);
 
         return $this->newRepoInstance($db, $mongoCollection, $mongoPersistable);
     }
@@ -77,16 +86,19 @@ abstract class aServiceRepository
      * Get Config Values
      *
      * Argument can passed and map to config if exists [$key][$_][$__] ..
+     *
+     * @param null $repo
      * @param $key
      * @param null $_
      *
      * @return mixed|null
      * @throws \Exception
      */
-    protected function _getConf($key = null, $_ = null)
+    protected function _getConf($repo = null, $key = null, $_ = null)
     {
         // retrieve and cache config
         $services = $this->services();
+        ($repo !== null) ?: $repo = $this->_getRepoKey();
 
         /** @var aSapi $config */
         $config   = $services->get('/sapi');
@@ -94,25 +106,26 @@ abstract class aServiceRepository
         /** @var DataEntity $config */
         $config   = $config->get(\Module\MongoDriver\Module::CONF_KEY, array());
 
-        if (!isset($config[self::CONF_REPOSITORIES]) && !is_array($config[self::CONF_REPOSITORIES]))
+        if (! isset($config[self::CONF_REPOSITORIES]) && !is_array($config[self::CONF_REPOSITORIES]) )
             throw new \Exception('Mongo Driver Module, Repositories Config Not Available.');
 
 
         $config   = $config[self::CONF_REPOSITORIES];
-        if (! isset($config[$this->_getRepoKey()])) {
+        if (! isset($config[$repo]) )
             throw new \Exception(sprintf(
                 'Mongo Driver Module, No Config Available for repository (%s).'
                 , $this->_getRepoKey()
             ));
-        }
 
 
 
         # Retrieve requested config key(s)
-        $config   = $config[$this->_getRepoKey()];
+        $config   = $config[$repo];
         $keyconfs = func_get_args();
+        array_shift($keyconfs);
+
         foreach ($keyconfs as $key) {
-            if (!isset($config[$key]))
+            if (! isset($config[$key]) )
                 return null;
 
             $config = $config[$key];

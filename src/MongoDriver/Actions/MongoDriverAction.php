@@ -8,13 +8,9 @@ use Poirot\Std\aConfigurable;
 /**
  * Accessible As a Service:
  *   $mongoDriver = \Module\MongoDriver\Actions\IOC::Driver();
- *   
- *   ## master connection 
- *   $mongoDriver->selectCollection('local', 'startup_log')->count();
- *   
- *   ## defined connection names
- *   $mongoDriver->replica->selectCollection('local', 'startup_log')->count();
- *   $mongoDriver->serverN->...
+ *
+ *   $db = $mongoDriver->getClient('master')
+ *      ->selectDatabase($db);
  *
  */
 
@@ -41,42 +37,8 @@ class MongoDriverAction
         return $this;
     }
 
-    /**
-     * Attain Connection Client
-     *
-     * - query on default database defined by client options
-     *
-     * @param string $db
-     * @param string $clientName
-     *
-     * @return MongoDB\Database
-     * @throws \Exception
-     */
-    function database($db = self::SELECT_DB_FROM_CONFIG, $clientName = self::CLIENT_DEFAULT)
-    {
-        if (!$this->hasClient($clientName))
-            throw new \Exception(sprintf('Client with name (%s) not exists.', $clientName));
 
-
-        $client = $this->getClient($clientName);
-        
-        if ($db == self::SELECT_DB_FROM_CONFIG && isset($this->lazyClientOptions[$clientName])
-            && is_array($this->lazyClientOptions[$clientName])
-            && isset($this->lazyClientOptions[$clientName]['db'])
-        ) {
-            // Retrieve Default DB Config to Connect Client To ...
-            $db = $this->lazyClientOptions[$clientName]['db'];
-        }
-        
-        
-        if ($db === null)
-            throw new \Exception(sprintf(
-                'Default Database name for Client (%s) not defined.'
-                , $clientName 
-            ));
-        
-        return $client->selectDatabase($db);
-    }
+    // Options:
 
     /**
      * Add Client Connection
@@ -84,21 +46,19 @@ class MongoDriverAction
      * Options:
      *    'db' => (string) default database to query on 
      * 
-     * @param MongoDB\Client $clientMongo
      * @param string         $clientName
-     * @param array          $options
+     * @param MongoDB\Client $clientMongo
+     *
      * @return $this
      * @throws \Exception
      */
-    function addClient(MongoDB\Client $clientMongo, $clientName, array $options = null)
+    function setClient($clientName, MongoDB\Client $clientMongo)
     {
         if ($this->hasClient($clientName))
             throw new \Exception(sprintf('Client with name (%s) already exists and cant be replaced.', $clientName));
 
+
         $this->clients[$clientName] = $clientMongo;
-        if ($options)
-            $this->with(array($clientName => $options));
-        
         return $this;
     }
 
@@ -112,29 +72,12 @@ class MongoDriverAction
      */
     function getClient($clientName)
     {
-        if (isset($this->clients[$clientName]))
-            return $this->clients[$clientName];
-
-        if (isset($this->lazyClientOptions[$clientName])) {
+        if (! isset($this->clients[$clientName]) )
             // if not client constructed look for lazy options:
-            $conf = $this->lazyClientOptions[$clientName];
-            
-            if (!isset($conf['host']))
-                throw new \Exception(sprintf(
-                    'Options for Client (%s) need Host at least. given: (%s)'
-                    , $clientName
-                    , \Poirot\Std\flatten($conf)
-                ));
-            
-            $uri        = $conf['host'];
-            $uriOptions = (isset($conf['options_uri']))    ? $conf['options_uri']    : array();
-            $options    = (isset($conf['options_driver'])) ? $conf['options_driver'] : array();
+            $this->clients[$clientName] = $this->_attainClient($clientName);
 
-            $client = new MongoDB\Client($uri, $uriOptions, $options);
-            return $this->clients[$clientName] = $client;
-        }
 
-        throw new \Exception(sprintf('MongoDB Client (%s) not Registered.', $clientName));
+        return $this->clients[$clientName];
     }
 
     /**
@@ -146,8 +89,7 @@ class MongoDriverAction
      */
     function hasClient($clientName)
     {
-        $exists = array_key_exists($clientName, $this->lazyClientOptions);
-        if (!$exists) {
+        if (! isset($this->clients[$clientName]) ) {
             // Lookup for lazy client options
             try {
                 $exists = true;
@@ -155,8 +97,11 @@ class MongoDriverAction
             } catch (\Exception $e) {
                 $exists = false;
             }
+
+            return $exists;
         }
 
+        $exists = array_key_exists($clientName, $this->lazyClientOptions);
         return $exists;
     }
 
@@ -203,10 +148,43 @@ class MongoDriverAction
      */
     function with(array $options, $throwException = false)
     {
-        if (isset($options['clients'])) {
+        if (isset($options['clients']))
             $this->lazyClientOptions = array_merge($this->lazyClientOptions, $options['clients']);
-        }
+
         
         return $this;
+    }
+
+
+    // ..
+
+    /**
+     * Attain Client Instance from LazyConfigs
+     *
+     * @param $clientName
+     *
+     * @return MongoDB\Client
+     * @throws \Exception
+     */
+    protected function _attainClient($clientName)
+    {
+        if (! isset($this->lazyClientOptions[$clientName]) )
+            throw new \Exception(sprintf('MongoDB Client (%s) not Registered.', $clientName));
+
+
+        $conf = $this->lazyClientOptions[$clientName];
+        if (! isset($conf['host']) )
+            throw new \Exception(sprintf(
+                '"host" Option for Client (%s) not given.'
+                , $clientName
+                , \Poirot\Std\flatten($conf)
+            ));
+
+        $uri        = $conf['host'];
+        $uriOptions = (isset($conf['options_uri']))    ? $conf['options_uri']    : array();
+        $options    = (isset($conf['options_driver'])) ? $conf['options_driver'] : array();
+
+        $client = new MongoDB\Client($uri, $uriOptions, $options);
+        return $client;
     }
 }

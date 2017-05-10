@@ -8,7 +8,7 @@
     ]
     , "require": {
         "ext-mongodb": "*"
-        , "poirot/skeleton": "dev-devel"
+        , "poirot/skeleton": "dev-master"
         , "mongodb/mongodb": "^1.0.0"
     }
     , "autoload"  : {

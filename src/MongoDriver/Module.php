@@ -33,11 +33,11 @@ class Module implements iSapiModule
      *
      * @param iApplication|aSapi $sapi Application Instance
      *
-     * @return void
+     * @return false|null False mean not setup with other module features (skip module)
      */
     function initialize($sapi)
     {
-        if (!extension_loaded('mongodb'))
+        if (! extension_loaded('mongodb') )
             throw new \RuntimeException('Mongodb driver extension not installed.');
         
         

@@ -3,6 +3,7 @@ namespace Module\MongoDriver\Model;
 
 use Poirot\Std\Type\StdTravers;
 
+
 trait tPersistable
 {
     // Implement Serializable / Unserializable

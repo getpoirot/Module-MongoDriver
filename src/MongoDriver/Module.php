@@ -62,7 +62,6 @@ namespace Module\MongoDriver
 
 
             require_once __DIR__.'/_functions.php';
-            require_once __DIR__.'/_ioc-facade.php';
         }
 
         /**

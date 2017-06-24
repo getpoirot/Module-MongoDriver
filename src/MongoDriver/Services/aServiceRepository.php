@@ -24,6 +24,11 @@ abstract class aServiceRepository
     /** @var string Service Name */
     protected $name = 'xxxxx';
 
+    protected $mongoClient;
+    protected $mongoCollection;
+    protected $mongoPersistable;
+    protected $dbName;
+
 
     /**
      * Create Service
@@ -34,10 +39,10 @@ abstract class aServiceRepository
     final function newService()
     {
         # Prepare Options
-        $mongoClient      = $this->optsData()->getMongoClient();
-        $mongoCollection  = $this->optsData()->getMongoCollection();
-        $mongoPersistable = $this->optsData()->getMongoPersistable();
-        $mongoDatabase    = $this->optsData()->getDbName();
+        $mongoClient      = $this->mongoClient;
+        $mongoCollection  = $this->mongoCollection;
+        $mongoPersistable = $this->mongoPersistable;
+        $mongoDatabase    = $this->dbName;
 
         $mongoClient      = ($mongoClient)      ? $mongoClient      : $this->_getConf(null, 'collection', 'client');
         $mongoCollection  = ($mongoCollection)  ? $mongoCollection  : $this->_getConf(null, 'collection', 'name');
@@ -143,5 +148,40 @@ abstract class aServiceRepository
     final function _getRepoKey()
     {
         return static::class;
+    }
+
+
+    // Options
+
+    /**
+     * @param mixed $mongoClient
+     */
+    function setMongoClient($mongoClient)
+    {
+        $this->mongoClient = $mongoClient;
+    }
+
+    /**
+     * @param mixed $mongoCollection
+     */
+    function setMongoCollection($mongoCollection)
+    {
+        $this->mongoCollection = $mongoCollection;
+    }
+
+    /**
+     * @param mixed $mongoPersistable
+     */
+    function setMongoPersistable($mongoPersistable)
+    {
+        $this->mongoPersistable = $mongoPersistable;
+    }
+
+    /**
+     * @param mixed $dbName
+     */
+    function setDbName($dbName)
+    {
+        $this->dbName = $dbName;
     }
 }

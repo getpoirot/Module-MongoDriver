@@ -44,10 +44,10 @@ abstract class aServiceRepository
         $mongoPersistable = $this->mongoPersistable;
         $mongoDatabase    = $this->dbName;
 
-        $mongoClient      = ($mongoClient)      ? $mongoClient      : $this->_getConf(null, 'collection', 'client');
-        $mongoCollection  = ($mongoCollection)  ? $mongoCollection  : $this->_getConf(null, 'collection', 'name');
-        $mongoDatabase    = ($mongoDatabase)    ? $mongoDatabase    : $this->_getConf(null, 'collection', 'db_name');
-        $mongoPersistable = ($mongoPersistable) ? $mongoPersistable : $this->_getConf(null, 'persistable');
+        $mongoClient      = ($mongoClient)      ? $mongoClient      : $this->_getConf('self', 'collection', 'client');
+        $mongoCollection  = ($mongoCollection)  ? $mongoCollection  : $this->_getConf('self', 'collection', 'name');
+        $mongoDatabase    = ($mongoDatabase)    ? $mongoDatabase    : $this->_getConf('self', 'collection', 'db_name');
+        $mongoPersistable = ($mongoPersistable) ? $mongoPersistable : $this->_getConf('self', 'persistable');
 
 
         if (! $mongoDatabase )
@@ -103,7 +103,7 @@ abstract class aServiceRepository
     {
         // retrieve and cache config
         $services = $this->services();
-        ($repo !== null) ?: $repo = $this->_getRepoKey();
+        ($repo !== 'self') ?: $repo = $this->_getRepoKey();
 
         /** @var aSapi $config */
         $config   = $services->get('/sapi');
@@ -111,16 +111,14 @@ abstract class aServiceRepository
         /** @var DataEntity $config */
         $config   = $config->get(\Module\MongoDriver\Module::CONF_KEY, array());
 
-        if (! isset($config[self::CONF_REPOSITORIES]) && !is_array($config[self::CONF_REPOSITORIES]) )
-            throw new \Exception('Mongo Driver Module, Repositories Config Not Available.');
+        if (! isset($config[self::CONF_REPOSITORIES]) || !is_array($config[self::CONF_REPOSITORIES]) )
+            return null;
 
 
         $config   = $config[self::CONF_REPOSITORIES];
         if (! isset($config[$repo]) )
-            throw new \Exception(sprintf(
-                'Mongo Driver Module, No Config Available for repository (%s).'
-                , $this->_getRepoKey()
-            ));
+            // Config not found for this repository
+            return null;
 
 
 

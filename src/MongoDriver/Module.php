@@ -98,12 +98,14 @@ namespace Module\MongoDriver
 }
 
 
-namespace Module\MongoDriver\Actions
+namespace Module\MongoDriver
 {
+    use Module\MongoDriver\Actions\MongoDriverAction;
+
 
     /**
      * @method static MongoDriverAction Driver()
      */
-    class IOC extends \IOC
+    class Actions extends \IOC
     { }
 }

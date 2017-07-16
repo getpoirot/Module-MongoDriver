@@ -65,7 +65,7 @@ abstract class aServiceRepository
 
 
         /** @var MongoDriverAction $mongoDriver */
-        $mongoDriver = \Module\MongoDriver\Actions\IOC::Driver();
+        $mongoDriver = \Module\MongoDriver\Actions::Driver();
         $db          = $mongoDriver->getClient($mongoClient)
             ->selectDatabase($mongoDatabase);
 

@@ -7,7 +7,7 @@ use Poirot\Std\aConfigurable;
 
 /**
  * Accessible As a Service:
- *   $mongoDriver = \Module\MongoDriver\Actions\IOC::Driver();
+ *   $mongoDriver = \Module\MongoDriver\Actions::Driver();
  *
  *   $db = $mongoDriver->getClient('master')
  *      ->selectDatabase($db);

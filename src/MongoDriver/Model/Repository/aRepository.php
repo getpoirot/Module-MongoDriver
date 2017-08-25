@@ -6,6 +6,12 @@ use \MongoDB;
 
 class aRepository
 {
+    protected $typeMap = [
+        'root'     => 'MongoDB\Model\BSONDocument',
+        'array'    => 'MongoDB\Model\BSONArray',
+        'document' => 'MongoDB\Model\BSONDocument' , // !! traversable object to fully serialize to array
+    ];
+
     /** @var MongoDB\Database */
     protected $gateway;
     /** @var string Collection Name That Query Executed On */
@@ -27,7 +33,7 @@ class aRepository
     {
         $this->_giveGateway($mongoDb);
         $this->_giveDbCollection($collection);
-        
+
         if ($persistable) 
             $this->setModelPersist($persistable);
         
@@ -90,7 +96,8 @@ class aRepository
         // reset _query collection
         $this->_q = null;
         
-        $this->persist = get_class($persistable);
+        $this->typeMap['root'] = get_class($persistable);
+        $this->persist = $this->typeMap['root'];
         return $this;
     }
     
@@ -110,10 +117,9 @@ class aRepository
 
         $db = $this->gateway;
         if ($this->persist) {
-            $db = $db->withOptions(array('typeMap' => array(
-                'root'     => $this->persist,
-                'document' => 'MongoDB\Model\BSONDocument', // !! traversable object to fully serialize to array
-            )));
+            $db = $db->withOptions([
+                'typeMap' => $this->typeMap,
+            ]);
         }
 
         $this->_q = $db->selectCollection($this->collection_name);

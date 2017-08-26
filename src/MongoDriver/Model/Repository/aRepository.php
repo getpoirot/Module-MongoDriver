@@ -8,7 +8,7 @@ class aRepository
 {
     protected $typeMap = [
         'root'     => 'MongoDB\Model\BSONDocument',
-        'array'    => 'MongoDB\Model\BSONArray',
+        'array'    => 'array',
         'document' => 'MongoDB\Model\BSONDocument' , // !! traversable object to fully serialize to array
     ];
 

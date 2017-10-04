@@ -14,7 +14,8 @@ namespace Module\MongoDriver
 
     use Poirot\Std\Interfaces\Struct\iDataEntity;
 
-// TODO Implement Model Sample Structure to local or something default collection db
+    // TODO Implement Model Sample Structure to local or something default collection db
+    // TODO Generator that give findAll result and change it from PersistEntity Into Domain Entity
 
     class Module implements iSapiModule
         , Sapi\Module\Feature\iFeatureModuleInitSapi

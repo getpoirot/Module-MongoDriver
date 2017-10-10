@@ -115,14 +115,14 @@ namespace Module\MongoDriver
      * )
      *
      *
-     * @param string $expression      ['limit']
+     * @param array  $expression      ['limit']
      * @param array  $exclusionFields The fields that is in query string but must not used in expression
      * @param string $exclusionBehave allow|disallow
      *
      * @return array
      * @throws \Exception
      */
-    function parseExpressionFromArray($expression, array $exclusionFields = array(), $exclusionBehave = 'disallow')
+    function parseExpressionFromArray(array $expression, array $exclusionFields = array(), $exclusionBehave = 'disallow')
     {
         $parsed = [];
         foreach ($expression as $field => $term)

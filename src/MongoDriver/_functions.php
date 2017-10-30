@@ -83,7 +83,7 @@ namespace Module\MongoDriver
     /**
      * Parse Expression From Query String
      *
-     * ?meta=is_file:true|file_size>40000&mime_type=audio/mp3&version_tag=latest|low_quality
+     * ?meta=is_file:true|file_size>40000&mime_type=audio/mp3&version=tag:latest|low_quality
      *        &offset=latest_id&limit=20
      *
      * @param string $expression      ['limit']

@@ -83,6 +83,9 @@ namespace Module\MongoDriver
     /**
      * Parse Expression From Query String
      *
+     * note: Query strings in php can't include field same as pre.field=x
+     *       php convert to _ automatically
+     *
      * ?meta=is_file:true|file_size>40000&mime_type=audio/mp3&version=tag:latest|low_quality
      *        &offset=latest_id&limit=20
      *
@@ -156,7 +159,7 @@ namespace Module\MongoDriver
                 foreach ($termExchange as $i => $t)
                 {
                     // $t=is_file:true
-                    if (preg_match('/(?P<operand>\w+)(?P<operator>[:<>])(?<value>\w+)/', $t, $matches)) {
+                    if (preg_match('/(?P<operand>\w.+)(?P<operator>[:<>])(?<value>.+)/', $t, $matches)) {
                         switch ($matches['operator']) {
                             case ':': $operator = '$eq'; break;
                             case '>': $operator = '$gt'; break;

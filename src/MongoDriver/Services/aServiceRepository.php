@@ -58,10 +58,8 @@ abstract class aServiceRepository
             throw new \Exception('Collection name not available from Config or neither Options.');
 
         if (! $mongoClient )
-            throw new \Exception(sprintf(
-                'Client name for collection (%s) not available from Config or neither Options.'
-                , $mongoCollection
-            ));
+            // Try to get default client
+            $mongoClient = $this->_getConf(self::class, 'client');
 
 
         /** @var MongoDriverAction $mongoDriver */
@@ -106,10 +104,10 @@ abstract class aServiceRepository
         ($repo !== 'self') ?: $repo = $this->_getRepoKey();
 
         /** @var aSapi $config */
-        $config   = $services->get('/sapi');
-        $orig = $config   = $config->config();
+        $config = $services->get('/sapi');
+        $config = $config->config();
         /** @var DataEntity $config */
-        $config   = $config->get(\Module\MongoDriver\Module::CONF_KEY, array());
+        $config = $config->get(\Module\MongoDriver\Module::CONF_KEY, array());
 
         if (! isset($config[self::CONF_REPOSITORIES]) || !is_array($config[self::CONF_REPOSITORIES]) )
             return null;
@@ -120,10 +118,12 @@ abstract class aServiceRepository
             // Config not found for this repository
             return null;
 
-
-
-        # Retrieve requested config key(s)
         $config   = $config[$repo];
+
+
+
+        ## Retrieve requested config key(s)
+        #
         $keyconfs = func_get_args();
         array_shift($keyconfs);
 

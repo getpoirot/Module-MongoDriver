@@ -13,6 +13,7 @@ return array(
             => [
                 // default db name
                 'db_name' => 'poirot',
+                'client'  => 'master',
 
                 // !! this settings are an example how you can define your repo settings
                 'collection'  => [

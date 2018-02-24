@@ -182,6 +182,11 @@ namespace Module\MongoDriver
                             ]
                         );
                     } else {
+                        if ( is_array($t) ) {
+                            // TODO
+                            VOID;
+                        }
+
                         // $t=audio/mp3
                         if (in_array(strtolower($t), ['true', 'false']))
                             $t = filter_var($t, FILTER_VALIDATE_BOOLEAN);
@@ -209,6 +214,13 @@ namespace Module\MongoDriver
                 $term = [
                     '$eq' => $term,
                 ];
+
+            elseif (is_array($term) && array_values($term) == $term) // not associated
+                $term = [
+                    '$eq' => $term,
+                ];
+
+
 
             $parsed[$field] = $term;
 

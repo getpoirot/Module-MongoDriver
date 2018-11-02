@@ -1,8 +1,21 @@
 <?php
 namespace Module\MongoDriver
 {
-
     use MongoDB\BSON\ObjectID;
+    use MongoDB\BSON\UTCDatetime;
+
+
+    /**
+     * Make Mongo UTCDatetime from Datetime
+     *
+     * @param \DateTime $dateTime
+     *
+     * @return UTCDatetime
+     */
+    function makeMongoDateFromDatetime(\DateTime $dateTime)
+    {
+        return new UTCDatetime($dateTime->getTimestamp() * 1000);
+    }
 
     /**
      * Make Mongo Condition From Expression

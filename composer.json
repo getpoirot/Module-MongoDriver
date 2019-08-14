@@ -9,14 +9,14 @@
     , "require": {
         "ext-mongodb": "*"
         , "poirot/skeleton": "dev-devel"
-        , "mongodb/mongodb": "1.1.2"
+        , "mongodb/mongodb": "1.5.5"
     }
     , "autoload"  : {
         "psr-4": {
-            "Module\\MongoDriver\\": "src/MongoDriver/"
+            "Module\\MongoDriver\\": "src/"
         },
         "files": [
-            "src/MongoDriver/_functions.php"
+            "src/_functions.php"
         ]
     }
 }

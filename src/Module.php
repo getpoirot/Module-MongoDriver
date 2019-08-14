@@ -25,38 +25,22 @@ namespace Module\MongoDriver
     {
         const CONF_KEY = 'module.mongo_driver';
 
+
         /**
-         * Init Module Against Application
-         *
-         * - determine sapi server, cli or http
-         *
-         * priority: 1000 A
-         *
-         * @param iApplication|aSapi $sapi Application Instance
-         *
-         * @return false|null False mean not setup with other module features (skip module)
+         * @inheritdoc
          */
         function initialize($sapi)
         {
             if (! extension_loaded('mongodb') )
                 throw new \RuntimeException('Mongodb driver extension not installed.');
-
-
         }
 
         /**
-         * Register class autoload on Autoload
-         *
-         * priority: 1000 B
-         *
-         * @param LoaderAutoloadAggregate $baseAutoloader
-         *
-         * @return iLoaderAutoload|array|\Traversable|void
+         * @inheritdoc
          */
         function initAutoload(LoaderAutoloadAggregate $baseAutoloader)
         {
-            #$nameSpaceLoader = \Poirot\Loader\Autoloader\LoaderAutoloadNamespace::class;
-            $nameSpaceLoader = 'Poirot\Loader\Autoloader\LoaderAutoloadNamespace';
+            $nameSpaceLoader = \Poirot\Loader\Autoloader\LoaderAutoloadNamespace::class;
             /** @var LoaderAutoloadNamespace $nameSpaceLoader */
             $nameSpaceLoader = $baseAutoloader->loader($nameSpaceLoader);
             $nameSpaceLoader->addResource(__NAMESPACE__, __DIR__);
@@ -66,34 +50,19 @@ namespace Module\MongoDriver
         }
 
         /**
-         * Register config key/value
-         *
-         * priority: 1000 D
-         *
-         * - you may return an array or Traversable
-         *   that would be merge with config current data
-         *
-         * @param iDataEntity $config
-         *
-         * @return array|\Traversable
+         * @inheritdoc
          */
         function initConfig(iDataEntity $config)
         {
-            return \Poirot\Config\load(__DIR__ . '/../../config/mod-driver_mongo');
+            return \Poirot\Config\load(__DIR__ . '/../config/mod-driver_mongo');
         }
 
         /**
-         * Get Action Services
-         *
-         * priority: after GrabRegisteredServices
-         *
-         * - return Array used to Build ModuleActionsContainer
-         *
-         * @return array|ContainerForFeatureActions|BuildContainer|\Traversable
+         * @inheritdoc
          */
         function getActions()
         {
-            return \Poirot\Config\load(__DIR__ . '/../../config/mod-driver_mongo.actions');
+            return \Poirot\Config\load(__DIR__ . '/../config/mod-driver_mongo.actions');
         }
     }
 }

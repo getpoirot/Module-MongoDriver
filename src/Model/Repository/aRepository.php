@@ -21,13 +21,14 @@ class aRepository
     
     /** @var MongoDB\Database Prepared DB Gateway With Options */
     protected $_q;
-    
+
 
     /**
      * RepositoryCategories constructor.
      *
-     * @param MongoDB\Database $mongoDb
-     * @param string           $collection
+     * @param MongoDB\Database              $mongoDb
+     * @param string                        $collection
+     * @param MongoDB\BSON\Persistable|null $persistable
      */
     function __construct(MongoDB\Database $mongoDb, $collection, MongoDB\BSON\Persistable $persistable = null)
     {

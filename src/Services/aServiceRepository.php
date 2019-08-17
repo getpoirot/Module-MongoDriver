@@ -19,8 +19,8 @@ $r = $categories->getTree($categories->findByID('red'));
 abstract class aServiceRepository
     extends aServiceContainer
 {
-    const CONF_REPOSITORIES = 'repositories';
-    
+    const CONF = 'repositories';
+
     /** @var string Service Name */
     protected $name = 'xxxxx';
 
@@ -64,7 +64,7 @@ abstract class aServiceRepository
 
         /** @var MongoDriverAction $mongoDriver */
         $mongoDriver = \Module\MongoDriver\Actions::Driver();
-        $db          = $mongoDriver->getClient($mongoClient)
+        $db          = $mongoDriver->client($mongoClient)
             ->selectDatabase($mongoDatabase);
 
         return $this->newRepoInstance($db, $mongoCollection, $mongoPersistable);

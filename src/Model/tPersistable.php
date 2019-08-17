@@ -3,7 +3,8 @@ namespace Module\MongoDriver\Model;
 
 use Poirot\Std\Type\StdTravers;
 
-
+// TODO available to simple objects by import to defined variable
+//      @see https://github.com/bjori/mongo-php-transistor/blob/master/src/Transistor.php
 trait tPersistable
 {
     // Implement Serializable / Unserializable

@@ -28,12 +28,12 @@ class RegisterMongoRepositoriesListener
         {
             $module = $module_manager->byModule($moduleName);
             if (! $module instanceof iFeatureMongoRepositories )
-                ## Nothing to do!!
+                // Nothing to do!
                 continue;
 
 
             $repositories = $module->registerMongoRepositories();
-            $this->_reposRegistry()->import($repositories);
+            $this->_reposRegistry()->mergeRecursive($repositories);
         }
     }
 

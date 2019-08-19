@@ -9,7 +9,7 @@
     , "require": {
         "ext-mongodb": "*"
         , "poirot/skeleton": "dev-devel"
-        , "mongodb/mongodb": "1.5.5"
+        , "mongodb/mongodb": "1.4.4"
     }
     , "autoload"  : {
         "psr-4": {

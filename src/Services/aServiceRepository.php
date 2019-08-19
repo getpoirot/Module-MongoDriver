@@ -3,10 +3,8 @@ namespace Module\MongoDriver\Services;
 
 use Module\MongoDriver\Actions\MongoDriverAction;
 use Module\MongoDriver\Model\Repository\aRepository;
-
-use Poirot\Application\aSapi;
+use Module\MongoDriver\Services;
 use Poirot\Ioc\Container\Service\aServiceContainer;
-use Poirot\Std\Struct\DataEntity;
 
 /*
 $categories = $services->fresh(
@@ -19,56 +17,11 @@ $r = $categories->getTree($categories->findByID('red'));
 abstract class aServiceRepository
     extends aServiceContainer
 {
-    const CONF = 'repositories';
-
-    /** @var string Service Name */
-    protected $name = 'xxxxx';
-
     protected $mongoClient;
+    protected $dbName;
     protected $mongoCollection;
     protected $mongoPersistable;
-    protected $dbName;
 
-
-    /**
-     * Create Service
-     *
-     * @return aRepository
-     * @throws \Exception
-     */
-    final function newService()
-    {
-        # Prepare Options
-        $mongoClient      = $this->mongoClient;
-        $mongoCollection  = $this->mongoCollection;
-        $mongoPersistable = $this->mongoPersistable;
-        $mongoDatabase    = $this->dbName;
-
-        $mongoClient      = ($mongoClient)      ? $mongoClient      : $this->_getConf('self', 'collection', 'client');
-        $mongoCollection  = ($mongoCollection)  ? $mongoCollection  : $this->_getConf('self', 'collection', 'name');
-        $mongoDatabase    = ($mongoDatabase)    ? $mongoDatabase    : $this->_getConf('self', 'collection', 'db_name');
-        $mongoPersistable = ($mongoPersistable) ? $mongoPersistable : $this->_getConf('self', 'persistable');
-
-
-        if (! $mongoDatabase )
-            // Try to get default database name
-            $mongoDatabase = $this->_getConf(self::class, 'db_name');
-
-        if (! $mongoCollection )
-            throw new \Exception('Collection name not available from Config or neither Options.');
-
-        if (! $mongoClient )
-            // Try to get default client
-            $mongoClient = $this->_getConf(self::class, 'client');
-
-
-        /** @var MongoDriverAction $mongoDriver */
-        $mongoDriver = \Module\MongoDriver\Actions::Driver();
-        $db          = $mongoDriver->client($mongoClient)
-            ->selectDatabase($mongoDatabase);
-
-        return $this->newRepoInstance($db, $mongoCollection, $mongoPersistable);
-    }
 
     /**
      * Return new instance of Repository
@@ -82,77 +35,49 @@ abstract class aServiceRepository
     abstract function newRepoInstance($mongoDb, $collection, $persistable = null);
 
 
-    // ..
-
     /**
-     * // TODO config as array access
-     * Get Config Values
+     * Create Service
      *
-     * Argument can passed and map to config if exists [$key][$_][$__] ..
-     *
-     * @param null $repo
-     * @param $key
-     * @param null $_
-     *
-     * @return mixed|null
+     * @return aRepository
      * @throws \Exception
      */
-    protected function _getConf($repo = null, $key = null, $_ = null)
+    final function newService()
     {
-        // retrieve and cache config
-        $services = $this->services();
-        ($repo !== 'self') ?: $repo = $this->_getRepoKey();
-
-        /** @var aSapi $config */
-        $config = $services->get('/sapi');
-        $config = $config->config();
-        /** @var DataEntity $config */
-        $config = $config->get(\Module\MongoDriver\Module::CONF_KEY, array());
-
-        if (! isset($config[self::CONF_REPOSITORIES]) || !is_array($config[self::CONF_REPOSITORIES]) )
-            return null;
-
-
-        $config   = $config[self::CONF_REPOSITORIES];
-        if (! isset($config[$repo]) )
-            // Config not found for this repository
-            return null;
-
-        $config   = $config[$repo];
-
-
-
-        ## Retrieve requested config key(s)
+        ## Prepare Options
         #
-        $keyconfs = func_get_args();
-        array_shift($keyconfs);
+        $mongoClient      = $this->mongoClient ?? $this->_getConf(static::class, 'collection', 'client');
+        $mongoCollection  = $this->mongoCollection ?? $this->_getConf(static::class, 'collection', 'name');
+        $mongoDatabase    = $this->mongoPersistable ?? $this->_getConf(static::class, 'collection', 'db_name');
+        $mongoPersistable = $this->dbName ?? $this->_getConf(static::class, 'persistable');
 
-        foreach ($keyconfs as $key) {
-            if (! isset($config[$key]) )
-                return null;
+        if (! $mongoDatabase )
+            // Try to get default database name
+            $mongoDatabase = $this->_getConf(aServiceRepository::class, 'db_name');
 
-            $config = $config[$key];
-        }
+        if (! $mongoCollection )
+            throw new \Exception('Collection name not available from Config or neither Options.');
 
-        return $config;
+        if (! $mongoClient )
+            // Try to get default client
+            $mongoClient = $this->_getConf(aServiceRepository::class, 'client');
+
+
+        ## Create Repository Instance
+        #
+        /** @var MongoDriverAction $mongoDriver */
+        $mongoDriver = \Module\MongoDriver\Actions::Driver();
+        $db = $mongoDriver->client($mongoClient)
+            ->selectDatabase($mongoDatabase);
+
+        return $this->newRepoInstance($db, $mongoCollection, $mongoPersistable);
     }
 
+    // Options:
+
     /**
-     * Get Key Of Merged Config To Retrieve Settings
-     *  \Module\Categories\Module::CONF_KEY
+     * Set Mongo Client Name
      *
-     * @return string
-     */
-    final function _getRepoKey()
-    {
-        return static::class;
-    }
-
-
-    // Options
-
-    /**
-     * @param mixed $mongoClient
+     * @param string $mongoClient
      */
     function setMongoClient($mongoClient)
     {
@@ -160,7 +85,19 @@ abstract class aServiceRepository
     }
 
     /**
-     * @param mixed $mongoCollection
+     * Set Database Name
+     *
+     * @param string $dbName
+     */
+    function setDbName($dbName)
+    {
+        $this->dbName = $dbName;
+    }
+
+    /**
+     * Mongo Collection Associated To This Repo
+     *
+     * @param string $mongoCollection
      */
     function setMongoCollection($mongoCollection)
     {
@@ -168,6 +105,8 @@ abstract class aServiceRepository
     }
 
     /**
+     * Set Entity Persistable Object Map
+     *
      * @param mixed $mongoPersistable
      */
     function setMongoPersistable($mongoPersistable)
@@ -175,11 +114,41 @@ abstract class aServiceRepository
         $this->mongoPersistable = $mongoPersistable;
     }
 
+    // ..
+
     /**
-     * @param mixed $dbName
+     * Get Config Values
+     *
+     * Argument can passed and map to config if exists [$key][$_][$__] ..
+     *
+     * @param string $repo
+     * @param $key
+     * @param null $_
+     *
+     * @return mixed|null
+     * @throws \Exception
      */
-    function setDbName($dbName)
+    protected function _getConf($repo, $key = null, $_ = null)
     {
-        $this->dbName = $dbName;
+        /** @var ReposRegistry $reposRegistry */
+        $reposRegistry = $this->services()->from('/module/mongodriver/services')
+            ->get(Services::ReposRegistry);
+
+
+        ## Retrieve requested config key(s)
+        #
+        $reposRegistry = $reposRegistry->get($repo, []);
+
+        $arguments = func_get_args();
+        array_shift($arguments);
+
+        foreach ($arguments as $key) {
+            if (! isset($reposRegistry[$key]) )
+                return null;
+
+            $reposRegistry = $reposRegistry[$key];
+        }
+
+        return $reposRegistry;
     }
 }

@@ -6,6 +6,7 @@ use Module\MongoDriver\Services;
 use Module\MongoDriver\Services\ReposRegistry;
 use Poirot\Application\aSapi;
 use Poirot\Application\Sapi\ModuleManager;
+use function Poirot\Std\flatten;
 
 
 class RegisterMongoRepositoriesListener
@@ -20,6 +21,7 @@ class RegisterMongoRepositoriesListener
      * Set Repositories Provided By Modules Into Registry
      *
      * @param ModuleManager $module_manager
+     * @throws \Exception
      */
     function __invoke($module_manager = null)
     {
@@ -33,6 +35,13 @@ class RegisterMongoRepositoriesListener
 
 
             $repositories = $module->registerMongoRepositories();
+            if (!is_array($repositories) && !$repositories instanceof \Traversable)
+                throw new \RuntimeException(sprintf(
+                    'Error While Loading Module (%s) Repositories; Setting should be Array or Traversable. given: (%s).'
+                    , $moduleName
+                    , is_object($repositories) ? get_class($repositories) : gettype($repositories)
+                ));
+
             $this->_reposRegistry()->mergeRecursive($repositories);
         }
     }

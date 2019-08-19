@@ -3,6 +3,8 @@ namespace Module\MongoDriver\Actions;
 
 use \MongoDB;
 use Poirot\Std\aConfigurable;
+use Poirot\Std\Type\StdArray;
+use Poirot\Std\Type\StdTravers;
 
 
 /**
@@ -106,6 +108,8 @@ class MongoDriverAction
      */
     function with(array $options, $throwException = true)
     {
+        // ensure options are array recursively
+        $options = StdTravers::of($options)->toArray(null, true);
         if ($throwException) {
             foreach ($options as $clientName => $conf)
                 if (! isset($conf['host']) )

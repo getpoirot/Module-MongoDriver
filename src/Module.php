@@ -88,7 +88,7 @@ namespace Module\MongoDriver
          */
         function registerMongoRepositories()
         {
-            return __DIR__ . '/../config/repositories.conf.php';
+            return include_once __DIR__ . '/../config/repositories.conf.php';
         }
     }
 }

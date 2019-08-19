@@ -16,7 +16,7 @@ return [
             #   This is particularly something to take into account for the password,
             #   as that is likely to have characters such as % in it.
             #
-            'host' => 'mongodb://127.0.0.1:27017',
+            'host' => 'mongodb://' . \Poirot\getEnv('DB_MONGO_HOST') ?: '127.0.0.1:27017',
 
             # Specifying options via the options argument will overwrite any options
             # with the same name in the uri argument.

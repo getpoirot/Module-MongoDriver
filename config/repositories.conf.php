@@ -17,7 +17,7 @@ return [
             // which client to connect and query with
             'client'  => MongoDriverAction::ClientMaster,
             // specific database for this collection
-            'db_name' => 'posts',
+            'db_name' => \Poirot\getEnv('DB_MONGO_DBNAME') ?: 'poirot',
 
             // query on which collection
             'name'    => 'name_collection',
